@@ -1,4 +1,0 @@
-// Update Statement to set tax amount for gasoline
-// Assuming Gas prices were $2.75/Gallon and Federal and State taxes were 46.4 cpg.
-
-update transactions set tax_amount = (amount / 2.75 * .464) where date >= '2010-01-01' and date < '2011-01-01' and categories_id = 26;

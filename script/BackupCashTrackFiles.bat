@@ -1,1 +1,0 @@
-robocopy "C:\CashTrack" "E:\BACKUP DATA\CashTrack" /MIR
