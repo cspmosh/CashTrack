@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Accounts: <%= controller.action_name %></title>
+<%= stylesheet_link_tag "cashtrack", :media => "all" %>
+</head>
+  <body>
+  <% if RAILS_ENV == "development" %><h2 align="center">Development Environment</h2><% end %>
+	<div id="header">
+		<div id="tab_box">
+				<a href="/accounts/"><div id="account_on"></div></a>
+				<a href="/budgets/"><div id="budget_off"></div></a>
+				<a href="/categories/"><div id="category_off"></div></a>
+				<a href="/transactions/"><div id="transaction_off"></div></a>
+				<a href="/budget_plan_details/monthly"><div id="summary_off"></div></a>
+		</div>
+	</div>
+	<div id="shadow_box">
+		<table border="0" cellpadding="0" cellspacing="0" id="main">
+			<tr>
+				<td id="left-edge"></td>
+				<td id="content_box">
+						<%= yield  %>			
+				</td>
+				<td id="right-edge"></td>
+			</tr>
+		</table>
+	</div>
+	<div id="footer"><span style="padding-left: 320px;">Created by Josh Turner (cs.pmosh@gmail.com)</span></div>
+  </body>

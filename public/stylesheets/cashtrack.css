@@ -1,0 +1,169 @@
+a {
+	color: #000000;
+}
+
+.header_title_1 {
+	font-size: 25px;
+}
+
+.header_title_2 {
+	font-size: 18px;
+	font-weight: bold;
+	background: #444444;
+	color: #ffffff;
+	text-align: center;
+}
+
+.summary_table {
+	margin: auto;
+	width: 75%;
+	vertical-align: top;
+	text-align: center;
+}
+
+.summary_table th {
+	background: #5D784B;
+}
+
+.display_table {
+	font-size: 11px;
+	font-family: arial;
+	margin: auto;
+	width: 100%;
+	vertical-align: top;
+	padding-top: 0px;
+	margin-top: 0px;
+}
+
+.display_table th {
+	background: #46543C;
+	color: #ffffff;
+}
+
+.display_table td {
+	background: #ffffff;
+	text-align: center;
+}
+
+.new_object_form_table {
+	font-size: 12px;
+	width: 100px;
+	margin: auto;
+}
+
+.new_object_form_table select {
+	font-size: 12px;
+}
+
+.inactive td {
+	background: #DFEBD3;
+	color: #999999;
+}
+
+#header {
+	width: 819px;
+	height: 97px;
+	margin-left: auto; 
+	margin-right: auto;
+	background-image: url("../images/header.jpg"); 
+	background-repeat: no-repeat; 
+}
+
+#tab_box {	width: 600px; padding-top: 70px; padding-left: 180px;}
+#tab_box div {
+	margin-left: 10px;
+}
+
+#account_on {	width: 110px;	height: 27px;	background-image: url("../images/active_accounts_tab.jpg");	background-repeat: no-repeat; float:left;}
+#budget_on {	width: 110px;	height: 27px;	background-image: url("../images/active_budgets_tab.jpg");	background-repeat: no-repeat; float:left;}
+#category_on {	width: 110px;	height: 27px;	background-image: url("../images/active_categories_tab.jpg");	background-repeat: no-repeat; float:left;}
+#transaction_on {	width: 110px;	height: 27px;	background-image: url("../images/active_transactions_tab.jpg");	background-repeat: no-repeat; float:left;}
+#summary_on {	width: 110px;	height: 27px;	background-image: url("../images/active_summary_tab.jpg");	background-repeat: no-repeat; float:left;}
+#account_off {	width: 110px;	height: 27px;	background-image: url("../images/inactive_accounts_tab.jpg");	background-repeat: no-repeat; float:left;}
+#budget_off {	width: 110px;	height: 27px;	background-image: url("../images/inactive_budgets_tab.jpg");	background-repeat: no-repeat; float:left;}
+#category_off {	width: 110px;	height: 27px;	background-image: url("../images/inactive_categories_tab.jpg");	background-repeat: no-repeat; float:left;}
+#transaction_off {	width: 110px;	height: 27px;	background-image: url("../images/inactive_transactions_tab.jpg");	background-repeat: no-repeat; float:left;}
+#summary_off {	width: 110px;	height: 27px;	background-image: url("../images/inactive_summary_tab.jpg");	background-repeat: no-repeat; float:left;}
+
+#footer {
+	width: 819px;
+	height: 36px;
+	margin-left: auto; 
+	margin-right: auto;
+	background-image: url("../images/footer.jpg");
+	clear: both;
+	font-size: 12px;
+	color: #ffffff;
+}
+
+#main {
+	width: 818px;
+	height: 500px;
+}
+
+#shadow_box { width: 819px; margin: auto;}
+
+#content_box {
+	width: 760px;
+	min-height: 100px;
+	margin-left: auto; 
+	margin-right: auto; 
+	background: #BFC9B1;
+	margin: 0; padding: 0;
+	vertical-align: top;
+}
+
+#left-edge {
+	width: 16px;
+	min-height: 1px;
+	background-image: url("../images/left_edge.jpg");
+	background-repeat: repeat-y;
+}
+
+#right-edge {
+	width: 16px;
+	min-height: 1px;
+	background-image: url("../images/right_edge.jpg");
+	background-repeat: repeat-y;
+}
+
+body {
+	background: #D0D0D0;
+}
+.select_width select {
+	width: 145px;
+}
+
+a.tooltip {
+	text-decoration: none;
+}
+
+a.tooltip:hover span {
+	display:inline; 
+	position:absolute; 
+	border:2px solid #cccccc; 
+	background:#efefef; 
+	color:#333399;
+}
+
+a.tooltip span {
+	display:none; 
+	padding:2px 3px; 
+	margin-left:8px; 
+	width:150px;
+}
+
+.filter input {
+	font-size: 10px;
+}
+
+.filter select {
+	font-size: 10px;
+	padding: 0px;
+	height: 19px;
+}
+
+.filter td {
+	background: #cccccc;
+	padding: 0px;
+}

@@ -1,0 +1,23 @@
+<%= will_paginate @categories %>
+<br/>
+<% if flash[:notice] %><div style="padding: 15px; color: #ffffff; background: #5D784B;"><%= flash[:notice] %></div><br/><% end %>
+<table border="0" class="display_table" >
+  <tr>
+    <th>Name</th>
+    <th>Note</th>
+  </tr>
+
+<% for category in @categories %>
+  <tr>
+    <td><%=h category.name %></td>
+    <td><%=h category.note %></td>
+    <td width="50"><%= link_to 'Edit', edit_category_path(category) %></td>
+    <td width="50"><%= link_to 'Destroy', category, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+<div align="center">
+	<br/>
+	<%= link_to 'New category', new_category_path %><br/><br/>
+</div>
+

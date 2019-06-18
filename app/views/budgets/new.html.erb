@@ -1,0 +1,34 @@
+
+
+<table border="0" class="new_object_form_table" style="width: 370px;">
+	<tr>
+		<td colspan="3"><h3>New budget</h3><% form_for(@budget) do |f| %>
+		<%= f.error_messages %></td>
+	</tr>
+	<tr>
+		<td class="select_width"><%= f.label :select_category %><br/><%= collection_select("budget", "categories_id", @categories, "id", "name") %></td>
+		<td width="50" align="center" style="padding-left: 10px; padding-right: 10px;"><strong>OR</strong> </td>
+		<td width="200"><%= f.label :create_category %><br/><%= text_field_tag("category","") %></td>
+	</tr>
+	<tr>
+		<td ><%= f.label :budget_amount %><br /><%= f.text_field :budget_amount, :size => 20 %></td>
+		<td></td>
+		<td><%= f.label :start_date %><br /><%= date_select("budget", "start_date", :discard_day => true) %></td>
+	</tr>
+	<tr>
+		<td class="select_width"><%= f.label :transaction_type %><br /><%= collection_select("budget", "transaction_types_id", @transaction_types, "id", "name") %></td>
+		<td></td>
+		<td class="select_width"><%= f.label :frequency %><br /><%= collection_select( "budget", "frequency_types_id", @frequency_types, "id", "frequency") %></td>
+	</tr>
+	<tr>
+		<td colspan="3" style="padding-top: 20px;"><%= f.submit "Create" %></td>
+	</tr>
+	<tr>
+		<td colspan="3" style="padding-top: 20px;"><%= link_to 'Back', budgets_path %></td>
+	</tr>
+</table>
+    
+
+<% end %>
+
+

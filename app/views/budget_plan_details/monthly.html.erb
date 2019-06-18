@@ -1,0 +1,75 @@
+<title>Summary: Monthly</title>
+<div align="right" style="padding-top: 5px; padding-right: 25px;"><a href="/budget_plan_details/monthly" style="text-decoration: none;">Monthly Summary</a> | <a href="/budget_plan_details/yearly">Annual Summary</a></div>
+
+<% form_tag :action => 'monthly', :method => :post do %><br/>
+<table border="0" width="100%" align="center">
+	<tr>
+		<td align="center">
+			<%= select_month(@selected_month) %><%= select_year(@selected_year) %>
+			<%= submit_tag 'Submit' %>
+		</td>
+	</tr>
+</table>
+<% end %>
+
+<br/>
+
+<table border="0" class="summary_table" style="width: 75%;">
+<% @month = 1 %> 
+
+<% until @month == 13 %>
+	<% if @month == @selected_month %>
+	<tr><td colspan="3" class="header_title_2"><%= @months[@month - 1] %> <%= @selected_year %></td></tr>
+	<tr>
+		<th>Category</th>
+		<th>Budget Amount</th>
+		<th>Amount Spent</th>
+	</tr>
+	<% @monthly_expenses.each do |expense| %>
+		<% expense['monthly_budget'] = calc_monthly_amount(expense['frequency'], expense['monthly_budget'].to_f) %>
+		<% if @selected_year == expense['year'].to_i and expense['month'].to_i == @month %>
+			<tr>
+				<td><%= expense['name'] %>
+					<% if not expense['note'].nil? %>
+						<a href="" class="tooltip">*<span><%= expense['note'] %></span></a>
+					<% end %>
+				</td>
+				<td><%= number_to_currency(expense['monthly_budget'].to_f.abs) %></td>
+				<td>
+					<% if expense['amount_spent'].to_f == 0 %>
+						<span style="color:#ff0000;">
+					<% else %>
+						<span style="color:#000000;">
+					<% end %><%=(number_to_currency(expense['amount_spent'].to_f * -1)) %></span>
+				</td>
+			</tr>
+			<% @m_amount_total += expense['amount_spent'].to_f %>
+			<% @m_budget_total += expense['monthly_budget'].to_f %>
+		<% end %>
+	<% end %>
+	<tr><td style="background: #dddddd;"><strong>Total Expenses:</strong></td><td style="background: #dddddd;"><strong><%= number_to_currency(@m_budget_total.to_f) %></strong></td><td style="background: #dddddd;"><strong><%= number_to_currency(@m_amount_total.to_f.abs) %></strong></td></tr>
+	<% @m_amount_total = 0 %><% @m_budget_total = 0 %>
+	<tr>
+		<th>Category</th>
+		<th>Expected Income</th>
+		<th>Amount Earned</th>
+	</tr>
+	<% @monthly_income.each do |income| %>
+		<% if @selected_year == income['year'].to_i and income['month'].to_i == @month %>
+			<tr>
+				<td><%= income['name'] %></td>
+				<td><%= number_to_currency(income['monthly_budget']) %></td>
+				<td><%= number_to_currency(income['amount_earned'].to_f.abs) %></td>
+			</tr>
+			<% @m_amount_total += income['amount_earned'].to_f %>
+			<% @m_budget_total += income['monthly_budget'].to_f %>
+		<% end %>
+	<% end %>
+	<tr><td style="background: #dddddd;"><strong>Total Income:</strong></td><td style="background: #dddddd;"><strong><%= number_to_currency(@m_budget_total.to_f) %></strong></td><td style="background: #dddddd;"><strong><%= number_to_currency(@m_amount_total.to_f.abs) %></strong></td></tr>
+	<% @m_amount_total = 0 %><% @m_budget_total = 0 %>
+	<% end %>
+	<% @month += 1 %>
+<% end %>
+</table>
+<br/><br/>
+

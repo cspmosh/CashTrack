@@ -1,0 +1,55 @@
+<%= will_paginate @transactions, :prev_label => "<< Newer", :next_label => "Older >>" %>
+<br/>
+<%= flash[:notice] %>
+<form action="index" method="post">
+<table border="0" class="display_table">
+  <tr>
+    <th>ID</th>
+    <th>Description</th>
+    <th>Amount</th>
+	<th>Category</th>
+	<th>Account</td>
+    <th>Type</th>
+    <th>Date</th>
+  </tr>
+  
+  <tr class="filter">
+	<td><%= text_field :number, "", :size => 2, :value => @f_1 %></td>
+	<td><%= text_field :description, "", :size => 60, :value => @f_2 %></td>
+	<td><%= text_field :amount, "", :size => 8, :value => @f_3 %></td>
+	<td><%= select("transaction", "categories_id", Category.all.collect {|c| [c.name, c.id] }.sort, { :include_blank => true, :selected => @f_4.to_i }) %></td>
+	<td><%= select("transaction", "accounts_id", Account.all.collect {|a| [a.name, a.id] }.sort, { :include_blank => true, :selected => @f_5.to_i }) %></td>
+	<td><%= select("transaction", "transaction_types_id", TransactionType.all.collect {|t| [t.name, t.id] }.sort, { :include_blank => true, :selected => @f_6.to_i }) %></td>
+	<td><%= text_field :date, "", :size => 9, :value => @f_7 %></td>
+	<td colspan="2"><%= submit_tag "Search" %></td>
+  </tr>
+
+
+<% for transaction in @transactions %>
+  <tr>
+    <td><%=h transaction.number %></td>
+    <td><%=h transaction.description %></td>
+    <td><%=h number_to_currency(transaction.amount.abs) %></td>
+	<td>
+		<% if not (transaction.categories_id.nil?) %><%=h transaction.category.name %><% else %>N/A<% end %>
+	</td>
+	<% if not(transaction.accounts_id.nil?) %>
+			<td><%=h transaction.account.name %></td>
+	<% else %>
+			<td>N/A</td>
+	<% end %>
+    <td><%=h transaction.transaction_type.name %></td>
+    <td><%=h transaction.date %></td>
+    <td><%= link_to 'Edit', edit_transaction_path(transaction) %></td>
+    <td><%= link_to 'Destroy', transaction, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %> 
+</table>
+<div align="center">
+	<br/>
+	<%= link_to 'New transaction', new_transaction_path %>
+</div>
+<br/>
+</form>
+
+

@@ -1,0 +1,21 @@
+
+<table border="0" class="new_object_form_table">
+	<tr>
+		<td><h3>New category</h3><% form_for(@category) do |f| %>
+		<%= f.error_messages %></td>
+	</tr>
+	<tr>
+		<td><%= f.label :name %><br /><%= f.text_field :name, :size => 53 %></td>
+	</tr>
+	<tr>
+		<td><%= f.label :note %><br /><%= f.text_area :note, :rows => 5 %></td>	
+	</tr>
+	<tr>
+		<td colspan="3" style="padding-top: 10px;"><%= f.submit "Create" %></td>
+	</tr>
+	<tr>
+		<td style="padding-top: 20px;"><%= link_to 'Back', categories_path %><% end %></td>
+	</tr>
+</table>	
+
+

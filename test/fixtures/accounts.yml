@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  number: MyString
+  name: MyString
+  account_type: MyString
+  balance: 9.99
+
+two:
+  number: MyString
+  name: MyString
+  account_type: MyString
+  balance: 9.99

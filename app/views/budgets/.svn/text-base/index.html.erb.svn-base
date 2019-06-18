@@ -1,0 +1,35 @@
+<%= will_paginate @budgets %>
+
+
+<br/>
+<table border="0" class="display_table">
+  <tr>
+    <th>Category</th>
+    <th>Monthly Budget</th>
+    <th>Yearly Budget</th>
+    <th>Budget Type</th>
+	<th>Frequency</th>
+    <th>Start Date</th>
+  </tr>
+
+
+<% for budget in @budgets %>
+  <tr>
+    <td><%=h budget.category.name %></td>
+    <td><%= number_to_currency(calc_monthly_amount(budget.frequency_type.frequency, budget.budget_amount)) %></td>
+    <td><%= number_to_currency(calc_annual_amount(budget.frequency_type.frequency, budget.budget_amount)) %></td>	
+    <td><%=h budget.transaction_type.name %></td>
+    <td><%=h budget.frequency_type.frequency %></td>
+    <td><%=h @months[budget.start_date.month - 1] %> <%=h budget.start_date.year %></td>
+    <td><%= link_to 'Edit', edit_budget_path(budget) %></td>
+    <td><%= link_to 'Destroy', budget, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+
+</table>
+<div align="center">
+	<br/>
+	<%= link_to 'New budget', new_budget_path %>
+	<br/><br/>
+</div>
+

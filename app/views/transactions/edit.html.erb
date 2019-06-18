@@ -1,0 +1,36 @@
+
+  <table border="0" class="new_object_form_table">
+	<tr>
+		<td colspan="3"><h3>Edit transaction</h3><% form_for(@transaction) do |f| %>
+  <%= f.error_messages %></td>
+	</tr>
+	<tr>
+		<td colspan="3"><%= f.label :date %><br/><%= f.date_select :date %></td>
+	</tr>
+	<tr>
+		<td colspan="3"><%= f.label :description %>*<br /><%= f.text_field :description, :size => 60 %></td>
+	</tr>
+	<tr>
+		<td><%= f.label :amount %>*<br /><%= f.text_field :amount, :size => 16 %></td>
+		<td><%= f.label :tax %><br /><%= f.text_field :tax_amount, :size => 4 %></td>
+		<td><%= f.label :transaction_type %>*<br /><%= collection_select("transaction", "transaction_types_id", @transaction_types, "id", "name") %></td>
+	</tr>
+	<tr>
+		<td class="select_width"><%= f.label :select_category %>*<br/><%= collection_select("transaction", "categories_id", @categories, "id", "name") %></td>
+		<td width="50" align="center"><strong>OR</strong> </td>
+		<td><%= f.label :create_category %><br/><%= text_field_tag("category","") %></td>
+	</tr>
+	<tr>
+		<td colspan="2"><%= f.label :id_number %><br /><%= f.text_field :number, :size => 16 %> (Optional)</td>
+		<td><%= f.label :account %><br /><%= collection_select("transaction", "accounts_id", @accounts, "id", "name") %> (Optional)</td>
+	</tr>
+	<tr>
+		<td colspan="3"><br/><%= f.submit "Update" %></td>
+	</tr>
+	<tr>
+		<td colspan="3" style="padding-top: 20px;"><%= link_to 'Back', transactions_path %></td>
+	</tr>
+  </table>
+<% end %>
+
+

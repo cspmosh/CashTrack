@@ -1,0 +1,26 @@
+
+<table border="0" class="new_object_form_table" style="width: 100px;">
+  <tr>
+	<td><h3>Editing account</h3><% form_for(@account) do |f| %><%= f.error_messages %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :number %><br /><%= f.text_field :number %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :name %><br /><%= f.text_field :name %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :account_type %><br /><%= f.text_field :account_type %></td>
+  </tr>
+  <tr>
+    <td><%= f.label :balance %><br /><%= f.text_field :balance %></td>
+  </tr>
+  <tr>
+	<td style="padding-top: 10px;"><%= f.submit "Update" %></td>
+  </tr>
+  <tr>
+	<td style="padding-top: 20px;"><%= link_to 'Back', accounts_path %></td>
+  </tr>
+<% end %>
+</table>
+

@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  budget_amount: 9.99
+  frequency: MyString
+  start_date: 2008-12-13
+
+two:
+  budget_amount: 9.99
+  frequency: MyString
+  start_date: 2008-12-13

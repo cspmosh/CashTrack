@@ -1,0 +1,258 @@
+class TransactionsController < ApplicationController
+	require 'date'
+  # GET /transactions
+  # GET /transactions.xml
+  def index
+  	if request.post?
+		@f_num = params["number"].to_s
+		@f_des = params["description"].to_s
+		@f_amo = params["amount"].to_s
+		@f_cat = params["transaction"]["categories_id"].to_s
+		@f_acc = params["transaction"]["accounts_id"].to_s
+		@f_typ = params["transaction"]["transaction_types_id"].to_s
+		@f_dat = params["date"].to_s
+	
+		# Used to refill in fields after search
+		@f_1 = @f_num
+		@f_2 = @f_des
+		@f_3 = @f_amo
+		@f_4 = @f_cat
+		@f_5 = @f_acc
+		@f_6 = @f_typ
+		@f_7 = @f_dat
+		
+		# appends '%' to each string so that blank values can still be used in search
+		@f_num += "%"
+		@f_des += "%"
+		@f_amo += "%"
+		@f_cat += "%"
+		@f_acc += "%"
+		@f_typ += "%"
+		@f_dat += "%"
+		
+	else
+		@f_num = "%"
+		@f_des = "%"
+		@f_amo = "%"
+		@f_cat = "%"
+		@f_acc = "%"
+		@f_typ = "%"
+		@f_dat = "%"
+		
+	end
+    
+	@categories = Category.find(:all, :order => 'name')
+	@no_category = Category.new(:name => "")
+	@categories.insert(0, @no_category)
+	@accounts = Account.find(:all, :order => 'name')
+	@no_account = Account.new(:name => "")
+	@accounts.insert(0, @no_account)
+	@transaction_types = TransactionType.find(:all)
+	@no_trans_type = TransactionType.new(:name => "")
+	@transaction_types.insert(0, @no_trans_type)
+	
+	@transactions = Transaction.paginate :page => params[:page], :per_page => 30, :order => 'YEAR(date) DESC, MONTH(date) DESC, DAY(date) DESC, id desc', :conditions => ['transactions.number like ? AND description like ? AND ABS(amount) like ? AND categories_id like ? AND accounts_id like ? AND transaction_types_id like ? AND date like ?', @f_num, @f_des, @f_amo, @f_cat, @f_acc, @f_typ, @f_dat ]
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @transactions }
+    end
+  end
+
+  #, :conditions => ['ABS(amount) > ? and description like ?', 20, '%oil%']
+  
+  # GET /transactions/new
+  # GET /transactions/new.xml
+  def new
+    @transaction = Transaction.new
+	@categories = Category.find(:all, :order => 'name')
+	@no_category = Category.new(:name => "N/A")
+	@categories.insert(0, @no_category)
+	@accounts = Account.find(:all, :order => 'name')
+	@transaction_types = TransactionType.find(:all)
+	
+    respond_to do |format|
+      format.html # new.html.erb
+      format.xml  { render :xml => @transaction }
+    end
+  end
+
+  # GET /transactions/1/edit
+  def edit
+    @transaction = Transaction.find(params[:id])
+	@accounts = Account.find(:all, :order => 'name')
+	@categories = Category.find(:all, :order => 'name')
+	@no_category = Category.new(:name => "N/A")
+	@categories.insert(0, @no_category)
+	@transaction_types = TransactionType.find(:all)
+	@transaction.amount = @transaction.amount.abs
+  end
+
+  # POST /transactions
+  # POST /transactions.xml
+  def create
+    @transaction = Transaction.new(params[:transaction])
+	date = params[:transaction]['date(1i)'].to_s + '-' + params[:transaction]['date(2i)'] + '-' + params[:transaction]['date(3i)']
+	if (!params['category'].blank?)
+		@new_category = Category.new
+		@new_category.name = params['category']
+		if (@new_category.save)
+			@transaction.categories_id = Category.find_by_name(params['category']).id
+			if (!@transaction.valid?)
+				Category.delete(Category.find_by_name(params['category']).id)
+			end
+		else
+			@transaction.categories_id = nil;
+		end
+		#Return budget with this category, month, and year if exists	
+		@existing_budget_current_month = Budget.find(:first, :conditions => [ "categories_id = ? AND MONTH(start_date) = ? AND YEAR(start_date) = ?", @transaction.categories_id, params[:transaction]['date(2i)'], params[:transaction]['date(1i)'] ])			
+		#Return budget with this category, previous month, and previous year if exists
+		@existing_budget_previous_month = Budget.find(:first, :conditions => [ "categories_id = ? AND start_date <> ?", @transaction.categories_id, date], :order => "start_date desc")
+	else
+		@existing_budget_current_month = Budget.find(:first, :conditions => [ "categories_id = ? AND MONTH(start_date) = ? AND YEAR(start_date) = ?", params['transaction']['categories_id'], params[:transaction]['date(2i)'], params[:transaction]['date(1i)'] ])
+		#Return budget with this category, previous month, and previous year if exists
+		@existing_budget_previous_month = Budget.find(:first, :conditions => [ "categories_id = ? AND start_date <> ?", params['transaction']['categories_id'], date], :order => "start_date desc")
+	end
+	@accounts = Account.find(:all)
+	@categories = Category.find(:all)
+	@transaction_types = TransactionType.find(:all)
+	@transaction_type = TransactionType.find(params[:transaction][:transaction_types_id]).name
+
+	
+    respond_to do |format|
+	  
+	  if @transaction.valid?
+		if @transaction_type == 'Expense'
+			@transaction.amount = - @transaction.amount.abs
+		else
+			@transaction.amount = @transaction.amount.abs
+		end
+	  end
+	  
+      if @transaction.save
+		if !@transaction.accounts_id.nil? 
+			@transaction.account.balance = @transaction.account.balance + @transaction.amount
+			@transaction.account.save
+		end
+		#if the transaction is associated with a category and the category has not been budgeted for this month, auto create a budget
+		if @existing_budget_current_month.nil? and !@transaction.categories_id.nil?
+			if @existing_budget_previous_month.nil?
+				#automatically create a budget associated with this transaction if non exists
+				@new_budget = Budget.new(:categories_id => @transaction.categories_id, :budget_amount => params[:transaction][:amount], :frequency_types_id => 1, :transaction_types_id => params[:transaction][:transaction_types_id], :start_date => Date.new(y=params[:transaction]['date(1i)'].to_i, m=params[:transaction]['date(2i)'].to_i, d=1))
+				@new_budget.save 
+			else
+				#automatically create a budget for this month using the same amount and frequency as a previous month with this budget name
+				@new_budget = Budget.new(:categories_id => @transaction.categories_id, :budget_amount => @existing_budget_previous_month.budget_amount, :frequency_types_id => @existing_budget_previous_month.frequency_types_id, :transaction_types_id => params[:transaction][:transaction_types_id], :start_date => Date.new(y=params[:transaction]['date(1i)'].to_i, m=params[:transaction]['date(2i)'].to_i, d=1))
+				@new_budget.save
+			end
+		end
+	    #flash[:notice] = 'Transaction was successfully added.'
+        format.html { redirect_to(transactions_url) }
+        format.xml  { render :xml => @transaction, :status => :created, :location => @transaction }
+      else
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @transaction.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
+  # PUT /transactions/1
+  # PUT /transactions/1.xml
+  def update
+		
+	@new_transaction = Transaction.new(params[:transaction])
+	@old_transaction = Transaction.find(params[:id])
+	@accounts = Account.find(:all)
+	@categories = Category.find(:all)
+	@transaction_types = TransactionType.find(:all)
+		
+	#Before verifying that the updated transaction is valid, the new category field must create a new category and assign its ID to 
+	#the categories_id of the transaction (If the new category field is not empty)
+	if (!params['category'].blank?)
+		@new_category = Category.new
+		@new_category.name = params['category']
+		if (@new_category.save)
+			@new_transaction.categories_id = Category.find_by_name(params['category']).id
+			if (!@new_transaction.valid?)
+				Category.delete(Category.find_by_name(params['category']).id)
+			end
+		else
+			#since the new category is not valid, set the mandatory categories_id column to nil so the transaction fails validation, too.
+			@new_transaction.categories_id = nil
+		end
+	end
+	
+    respond_to do |format|
+		if @new_transaction.valid?
+			#Before updating transaction, reverse previous transaction on prior associated account if amount, account, or transaction type is being updated.
+			if ((@old_transaction.amount != @new_transaction.amount) or (@old_transaction.accounts_id != @new_transaction.accounts_id) or (@old_transaction.transaction_types_id != @new_transaction.transaction_types_id))
+				#Validate that previous transaction is tied to an account
+				if !@old_transaction.accounts_id.nil? 			
+					#reverse the previous transaction on associated account
+					@old_transaction.account.balance = @old_transaction.account.balance - @old_transaction.amount	
+					#save the changes made to the associated account balance
+					@old_transaction.account.save						
+				end	
+				#Validate that updated transaction is tied to an account
+				if !@new_transaction.accounts_id.nil? 					
+					#Make sure that expenses are stored in the database as negative values
+					if TransactionType.find(@new_transaction.transaction_types_id).name == 'Expense'
+						@new_transaction.amount = - @new_transaction.amount.abs
+					else
+						@new_transaction.amount = @new_transaction.amount.abs
+					end		
+					#update the associated account to reflect the updated transaction amount and save
+					@new_transaction.account.balance = @new_transaction.account.balance + @new_transaction.amount
+					@new_transaction.account.save									
+					#Transfer updated attributes to stored transaction record and save updates					
+				end
+			end
+			@old_transaction.attributes = @new_transaction.attributes 				
+			if @old_transaction.save							
+				#Automatically create a new budget if the category in this transaction does not already have a budget plan for this month
+				#Return budget with this category, month, and year if exists	
+				@existing_budget_current_month = Budget.find(:first, :conditions => [ "categories_id = ? AND MONTH(start_date) = ? AND YEAR(start_date) = ?", @old_transaction.categories_id, @old_transaction.date.month, @old_transaction.date.year ])			
+				#Return budget that has had this category ever
+				@existing_budget_previous_month = Budget.find(:first, :conditions => [ "categories_id = ? AND start_date <> ?", @old_transaction.categories_id, @old_transaction.date], :order => "start_date desc")
+				if @existing_budget_current_month.nil?
+					if @existing_budget_previous_month.nil?
+						@new_budget = Budget.new(:categories_id => @old_transaction.categories_id, :budget_amount => @old_transaction.amount.abs, :frequency_types_id => 1, :transaction_types_id => @old_transaction.transaction_types_id, :start_date => Date.new(y=@old_transaction.date.year.to_i, m=@old_transaction.date.month.to_i, d=1))
+						@new_budget.save 
+					else
+						@new_budget = Budget.new(:categories_id => @old_transaction.categories_id, :budget_amount => @existing_budget_previous_month.budget_amount, :frequency_types_id => @existing_budget_previous_month.frequency_types_id, :transaction_types_id => @old_transaction.transaction_types_id, :start_date => Date.new(y=@old_transaction.date.year.to_i, m=@old_transaction.date.month.to_i, d=1))
+						@new_budget.save
+					end	
+				end
+			end
+		end
+		if @old_transaction.save
+			format.html { redirect_to(transactions_url) }
+			format.xml  { head :ok }
+		else
+			format.html { render :action => "edit" }
+			format.xml  { render :xml => @transaction.errors, :status => :unprocessable_entity }
+		end
+	end
+  end
+
+  # DELETE /transactions/1
+  # DELETE /transactions/1.xml
+  def destroy
+    @transaction = Transaction.find(params[:id])
+	@transaction.amount = @transaction.amount.abs	
+
+	if !@transaction.accounts_id.nil?
+		if @transaction.transaction_type.name == 'Expense'
+			@transaction.account.balance = @transaction.account.balance + @transaction.amount
+		else if @transaction.transaction_type.name == 'Deposit'
+			@transaction.account.balance = @transaction.account.balance - @transaction.amount
+			end
+		end
+		@transaction.account.save
+	end
+    @transaction.destroy
+    respond_to do |format|
+      format.html { redirect_to(transactions_url) }
+      format.xml  { head :ok }
+    end
+  end
+end

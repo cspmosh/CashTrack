@@ -1,0 +1,74 @@
+9
+
+dir
+41
+svn://localhost/cashtrack/branches/v1-1/test
+svn://localhost
+
+
+
+2009-03-01T19:20:13.890625Z
+14
+pmosh
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+9c378065-7683-4c46-9017-0cfe1ffd8452
+
+unit
+dir
+
+test_helper.rb
+file
+
+
+
+
+2009-03-01T22:39:19.208685Z
+30478106e9df8977e79fc045df799e29
+2009-02-22T22:50:41.921875Z
+5
+pmosh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1797
+
+functional
+dir
+
+integration
+dir
+
+fixtures
+dir
+

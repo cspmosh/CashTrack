@@ -1,0 +1,36 @@
+<%= will_paginate @accounts %>
+<br/>
+
+<table border="0" class="display_table">
+  <tr>
+    <th>Number</th>
+    <th>Name</th>
+    <th>Account type</th>
+    <th>Balance</th>
+  </tr>
+
+<% for account in @accounts %>
+  
+  <tr<% if account.active == '0' %> class="inactive"<% end %>>
+    <td align="center"><%=h account.number %></td>
+    <td align="center"><%=h account.name %></td>
+    <td align="center"><%=h account.account_type %></td>
+    <td align="center">
+		<% if account.balance < 0 %>
+		<span style="color:#ff0000;">
+		<% else %>
+		<span>
+		<% end %>
+		<%=h number_to_currency(account.balance) %>
+		</span>
+	</td>
+    <td align="center"><%= link_to 'Edit', edit_account_path(account) %></td>
+    <td align="center"><%= link_to 'Destroy', account, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+<div align="center">
+	<br/>
+	<%= link_to 'New account', new_account_path %>
+</div>
+
